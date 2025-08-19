@@ -6,6 +6,10 @@ import threading
 HOST = "127.0.0.1"
 PORT = 65432
 
+conns = []
+
+with open("log.txt", "a") as f:
+	f.write(f"\n\nNew Session\n")
 
 def client_handler(conn, addr):
 	with conn:
@@ -21,17 +25,21 @@ def client_handler(conn, addr):
 
 				with open("log.txt", "a") as f:
 					f.write(f"{decoded_data}\n")
-
-				conn.sendall(decoded_data.encode("utf-8"))
 				
 				if decoded_data.lower().strip() == "exit":
 					conn.sendall("dis123".encode("utf-8"))
 					break
 
 				print(f"{addr}{decoded_data}")
-				conn.sendall(decoded_data.encode("utf-8"))
+
+				for c in conns:
+					try:
+						c.sendall(decoded_data.encode("utf-8"))
+					except:
+						conns.remove(c)
+
 		except ConnectionResetError:
-			print("client unexpecedly dissconected!")
+			print("client unexpectedly dissconected!")
 
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -41,5 +49,7 @@ print(f"Server listening on {HOST}:{PORT}")
 
 while True:
 	conn, addr = server.accept()
+	conns.append(conn)
+	print(conns)
 	client_thread = threading.Thread(target=client_handler, args=(conn, addr))
 	client_thread.start()

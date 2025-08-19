@@ -3,6 +3,7 @@
 import socket
 import threading
 import tkinter as tk
+from time import sleep
 
 HOST = "127.0.0.1"
 PORT = 65432
@@ -10,17 +11,27 @@ PORT = 65432
 
 def recieve_data():
 
+	def exit():
+		client.close()
+		root.quit()
+		root.destroy()
+
+	
 	while True:
 
 		data = client.recv(1024)
 		decoded_data = data.decode("utf-8")
 
 		if decoded_data == "dis123":
+			print("Exiting now...")
+			root.after(0, exit)
 			break
-			exit()
 		else:
-			print(decoded_data)
-			message_box.insert(1.0, decoded_data)
+			def insert_text(msg=decoded_data):
+				message_box["state"] = "normal"
+				message_box.insert("end", f"{msg}\n")
+
+			root.after(0, insert_text)
 
 
 print("Welcome to my test server")
@@ -30,8 +41,11 @@ if run.lower().strip() == "y":
 	client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	client.connect((HOST, PORT))
 
+	laddr = client.getsockname()
+	raddr = client.getpeername()
+
 	usr = input("please enter a username: ")
-	client.sendall(f"made their username: {usr}".encode("utf-8"))
+	client.sendall(f"laddr:{laddr}, raddr:{raddr} made their username: {usr}".encode("utf-8"))
 
 	root = tk.Tk()
 	root.configure(background="black")	
@@ -40,6 +54,7 @@ if run.lower().strip() == "y":
 
 	message_box = tk.Text(root, height=30, bg="White")
 	message_box.pack(fill="both", padx=5, pady=5, expand=True)
+	message_box["state"] = "disabled" 
 
 	input_frame = tk.Frame(root)
 	input_frame.pack(side=tk.BOTTOM, fill=tk.X, padx=5, pady=5)
@@ -51,8 +66,8 @@ if run.lower().strip() == "y":
 	def clicked():
 
 		data = msg.get()
-		print(data)
 		client.sendall(f"{usr}: {data}".encode("utf-8"))
+		input_box.delete(0, "end")
 
 	
 	send_button = tk.Button(input_frame, text="send", command=clicked)
@@ -66,4 +81,4 @@ if run.lower().strip() == "y":
 	root.mainloop()
 
 else:
-	print("So why did u bother running the client")
+	print("So why did you bother running the client")
