@@ -26,7 +26,7 @@ def client_handler(conn, addr):
 				with open("log.txt", "a") as f:
 					f.write(f"{decoded_data}\n")
 				
-				if decoded_data.lower().strip() == "exit":
+				if decoded_data == "exit":
 					conn.sendall("dis123".encode("utf-8"))
 					break
 
