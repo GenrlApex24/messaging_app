@@ -3,10 +3,10 @@
 import socket
 import threading
 import tkinter as tk
-from time import sleep
 
-HOST = "127.0.0.1"
-PORT = 65432
+
+HOST = "127.0.0.1" # local example change to servers public ip if using an external server
+PORT = 65432 # example, you can change if wanted
 
 
 def recieve_data():
@@ -23,7 +23,6 @@ def recieve_data():
 		root.after(0, insert_text)
 
 
-print("Welcome to my test server")
 run = input("Do you want to connect to the server (y/n): ")
 
 if run.lower().strip() == "y":

@@ -3,8 +3,9 @@
 import socket
 import threading
 
-HOST = "127.0.0.1"
-PORT = 65432
+HOST = "127.0.0.1" # local example change to servers public ip if using an external server
+PORT = 65432 # example, you can change if wanted
+
 
 conns = []
 
